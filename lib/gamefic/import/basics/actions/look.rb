@@ -16,12 +16,16 @@ respond :look, Query::Room.new(Room) do |actor, room|
   end
   portals = room.children.that_are(Portal)
   if portals.length > 0
-    actor.tell "There are exits #{portals.join_and(', ')}."
+    if portals.length == 1
+      actor.tell "There is an exit #{portals[0]}."
+    else
+      actor.tell "There are exits #{portals.join_and(', ')}."
+    end
   end
   if actor.is? :supported
     actor.tell "You are on #{the actor.parent}."
     actor.parent.children.that_are(:supported).that_are_not(actor).each { |s|
-      actor.tell "#{A s} is on the chair."
+      actor.tell "#{A s} is on #{the actor.parent}."
     }
   end
 end
@@ -29,7 +33,7 @@ xlate "look", :look, "around"
 
 respond :look, Query::Visible.new() do |actor, thing|
   actor.tell thing.description
-  thing.children.that_are(:attached).each { |item|
+  thing.children.that_are(:attached).that_are(:itemized).each { |item|
     actor.tell "#{An item} is attached to #{the thing}."
   }
 end
@@ -64,3 +68,4 @@ xlate "l", :look
 xlate "l :thing", :look, :thing
 xlate "examine :thing", :look, :thing
 xlate "x :thing", :look, :thing
+xlate "search :thing", :look, :thing

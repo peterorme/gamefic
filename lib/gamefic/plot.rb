@@ -11,6 +11,8 @@ module Gamefic
       def self.method_missing(name, *args, &block)
         if @@plot.respond_to?(name)
           @@plot.send name, *args, &block
+        elsif Gamefic.respond_to?(name)
+          Gamefic.send name, *args, &block
         end
       end
     end
@@ -21,6 +23,7 @@ module Gamefic
 	class Plot
 		attr_reader :scenes, :commands, :conclusions, :imported_scripts, :rules
 		attr_accessor :story
+    include OptionMap
 		def commandwords
 			words = Array.new
 			@syntaxes.each { |s|

@@ -36,17 +36,17 @@ module Gamefic
     def name=(value)
       # TODO: Split article from name
       words = value.split_words
-      if ['a','an'].include?(words[0])
-        @indefinite_article = words[0]
+      if ['a','an'].include?(words[0].downcase)
+        @indefinite_article = words[0].downcase
         @definite_article = 'the'
         value = value[words[0].length+1..-1].strip
       else
-        if words[0] == 'the'
+        if words[0].downcase == 'the'
           @definite_article = 'the'
           value = value[4..-1].strip
         end
         # Try to guess the indefinite article
-        if ['a','e','i','o','u'].include?(value[0,1])
+        if ['a','e','i','o','u'].include?(value[0,1].downcase)
           @indefinite_article = 'an'
         else
           @indefinite_article = 'a'
@@ -65,23 +65,23 @@ module Gamefic
 		end
 	end
 
-end
+  def self.a(entity)
+    entity.indefinitely
+  end
+  def self.an(entity)
+    entity.indefinitely
+  end
+  def self.the(entity)
+    entity.definitely
+  end
+  def self.A(entity)
+    entity.indefinitely.cap_first
+  end
+  def self.An(entity)
+    entity.indefinitely.cap_first
+  end
+  def self.The(entity)
+    entity.definitely.cap_first
+  end
 
-def a(entity)
-  entity.indefinitely
-end
-def an(entity)
-  entity.indefinitely
-end
-def the(entity)
-  entity.definitely
-end
-def A(entity)
-  entity.indefinitely.cap_first
-end
-def An(entity)
-  entity.indefinitely.cap_first
-end
-def The(entity)
-  entity.definitely.cap_first
 end
