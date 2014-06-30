@@ -11,7 +11,7 @@
 # there's a "test me" command. This uses code in the import/script.rb 
 # file. 
 
-import 'basics'
+import 'standard'
 
 import 'script' # this is for the "test me" command 
 
