@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'json'
 
 module Gamefic
@@ -64,7 +65,7 @@ module Gamefic
           end
         end
         proc {
-          $SAFE = 3
+          $SAFE = Gamefic.safe_level
           response = Hash.new
           response[:output] = @user.stream.output
           response[:prompt] = @user.character.state.prompt
@@ -91,9 +92,10 @@ module Gamefic
             if s == :session
               entity.instance_variable_set(:@session, v)
             else
+              writer = "#{s.to_s[1..-1]}="
+              writer.untaint
               proc {
-                $SAFE = 3
-                writer = "#{s.to_s[1..-1]}="
+                $SAFE = Gamefic.safe_level
                 if entity.respond_to?(writer)
                   if v.kind_of?(Key)
                     entity.send(writer, @entity_keys[v.value])

@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'rubygems/package'
 require 'zlib'
 require 'tmpdir'
@@ -58,7 +59,7 @@ module Gamefic
         end
         Dir.mktmpdir 'gamefic_' do |dir|
           puts "Loading..."
-          story = Story.new
+          story = Plot.new
           begin
             decompress file, dir
           rescue Exception => e
@@ -74,7 +75,7 @@ module Gamefic
       end
       def test path
         puts "Loading..."
-        story = Story.new
+        story = Plot.new
         #begin
           if File.directory?(path)
             if !File.file?(path + '/main.rb')
@@ -90,6 +91,7 @@ module Gamefic
         #  exit 1
         #end
         engine = Tty::Engine.new story
+        puts "\n"
         engine.run
       end
       def init directory
@@ -113,7 +115,7 @@ module Gamefic
         Dir.mkdir(directory + '/import')
         main_rb = File.new(directory + '/main.rb', 'w')
         main_rb.write <<EOS
-import 'basics'
+import 'standard'
 
 room = make Room, :name => 'room'
 
@@ -123,7 +125,7 @@ introduction do |player|
 end
 EOS
         main_rb.close
-        fetch directory
+        #fetch directory
         puts "Game directory '#{directory}' initialized."
       end
       def fetch directory
@@ -136,7 +138,7 @@ EOS
           exit 1
         end
         puts "Loading game data..."
-        story = Story.new
+        story = Plot.new
         begin
           story.load directory + '/main.rb', true
         rescue Exception => e
@@ -190,7 +192,7 @@ EOS
           puts "The file #{filename} already exists."
           exit 1
         end
-        story = Story.new
+        story = Plot.new
         puts "Loading game data..."
         begin
           story.load directory + '/main.rb', true

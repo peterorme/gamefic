@@ -1,5 +1,12 @@
 require 'gamefic/engine'
-require 'thread'
+begin
+  require 'io/console'
+rescue LoadError
+  puts "This version of Ruby does not support io/console. Text may not wrap correctly."
+  if RUBY_VERSION.split('.')[0].to_i < 2
+    puts "It is recommended that you upgrade to Ruby 2.0.0 or higher."
+  end
+end
 
 module Gamefic
 
@@ -19,16 +26,25 @@ module Gamefic
       def initialize
         super
       end
-      def send(data)
-        print "#{terminalize data}\n\n"
+      def size
+        if STDOUT.respond_to?(:winsize)
+          return STDOUT.winsize.reverse
+        end
+        return [nil,nil]
+      end
+      def send data
+        width = size[0]
+        if width.nil?
+          super "#{data}\n"
+        else
+          super "#{terminalize(data, width - 1)}\n\n"
+        end
       end
       def select(prompt)
-        print "#{terminalize prompt}"
-        line = STDIN.gets
-        puts "\n"
-        @queue.push line.strip
+        super
+        print "\n"
       end
-      def terminalize string, max_length = 80
+      def terminalize string, max_length
         if max_length == nil
           return string
         end
